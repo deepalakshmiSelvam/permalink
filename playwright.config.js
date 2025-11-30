@@ -1,8 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
 
-// Load environment variables from .env file for local testing
-dotenv.config();
+// Only load dotenv locally, NOT on CI
+if (!process.env.CI) {
+  const dotenv = await import('dotenv');
+  dotenv.config();
+}
 
 export default defineConfig({
   testDir: './tests',
@@ -14,7 +16,6 @@ export default defineConfig({
   reporter: 'html',
   
   use: {
-    // Use headless mode on CI (GitHub Actions), visible browser locally
     headless: process.env.CI ? true : false,
     navigationTimeout: 60000,
     actionTimeout: 10000,
